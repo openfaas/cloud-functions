@@ -10,3 +10,10 @@ functions:
     environment:
       write_debug: true
       content_type: text/html
+  s3:
+    lang: go
+    handler: ./s3
+    image: openfaas/s3:latest
+    secrets:
+      - openfaas-s3
+
