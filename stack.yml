@@ -15,5 +15,5 @@ functions:
     handler: ./s3
     image: openfaas/s3:latest
     secrets:
-      - openfaas-s3
+      - s3
 
