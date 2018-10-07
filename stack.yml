@@ -23,11 +23,11 @@ functions:
     handler: ./signup
     image: signup:latest
     environment:
-      webpage_url: https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026
+      webpage_url: "https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026"
 
   slack:
     lang: golang-middleware
     handler: ./signup
     image: signup:latest
     environment:
-      webpage_url: https://docs.openfaas.com/community
+      webpage_url: "https://docs.openfaas.com/community"
