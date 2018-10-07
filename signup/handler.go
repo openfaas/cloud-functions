@@ -5,7 +5,8 @@ import (
 	"os"
 )
 
+// Handle a request with your middleware
 func Handle(w http.ResponseWriter, r *http.Request) {
-	gistURL := os.Getenv("gist_url")
-	http.Redirect(w, r, gistURL, http.StatusTemporaryRedirect)
+	gistURL := os.Getenv("webpage_url")
+	http.Redirect(w, r, gistURL, http.StatusPermanentRedirect)
 }
