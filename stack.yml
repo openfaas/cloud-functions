@@ -11,15 +11,18 @@ functions:
     lang: go
     handler: ./latest-release
     image: alexellis/latest-release:0.1
-  s3:
-    lang: go
-    handler: ./s3
-    image: openfaas/s3:0.2
+    environment:
+      write_debug: true
+      content_type: text/html
   signup:
     lang: golang-middleware
     handler: ./signup
     image: signup:latest
+     environment:
+       gist_url: "https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026"
   slack:
     lang: golang-middleware
     handler: ./slack
     image: slack:latest
+    environment:
+      slack_url: "https://docs.openfaas.com/community"
