@@ -8,6 +8,7 @@ import (
 // Handle a request with your middleware
 func Handle(w http.ResponseWriter, r *http.Request) {
 	if urlVal, ok := os.LookupEnv("slack_url"); ok && len(urlVal) > 0 {
+		w.WriteHeader(http.StatusOK)
 
 		w.Write([]byte(`<html>
 <head>
@@ -17,11 +18,10 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 </body>
 <script>
 	setTimeout(function() {
-		document.href = "` + urlVal + `";
+		window.location.replace("` + urlVal + `");
 	}, 100);
 </script
-</html>
-)`))
+</html>`))
 
 	} else {
 		http.Error(w, "Unable to find slack_url variable", http.StatusInternalServerError)
