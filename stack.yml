@@ -28,6 +28,6 @@ functions:
   slack:
     lang: golang-middleware
     handler: ./signup
-    image: slack:latest
+    image: signup:latest
     environment:
       webpage_url: https://docs.openfaas.com/community
