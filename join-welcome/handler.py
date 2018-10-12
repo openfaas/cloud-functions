@@ -1,7 +1,9 @@
 import sys
-import json
-import random
 import os
+import random
+import json
+from hashlib import sha256
+import hmac
 
 import requests
 
@@ -26,14 +28,37 @@ def handle(req):
     if "challenge" in r:
         return challenge(r)
 
-    with open("/var/openfaas/secrets/slack-incoming-webhook-url") as webhook_url_text:
-        webhook_url = webhook_url_text.read().strip()
+    if "event" in r:
+        webhook_url = read_secret("slack-incoming-webhook-url")
+        signing_secret = read_secret("slack-signing-secret")
 
-        if "event" in r:
-            target_channel = os.getenv("target_channel")
+        target_channel = os.getenv("target_channel")
+        digest = os.getenv("Http_X_Slack_Signature", "")
+
+        # Takes format of: "Http_X_Slack_Signature v0=hash"
+        if valid_hmac(signing_secret, req, get_hash(digest)) == True:
             return process_event(r, target_channel, webhook_url)
+        else:
+            sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
+            sys.exit(1)
 
     return "Nothing to do with webhook"
+
+def read_secret(name):
+    value = ""
+    
+    with open("/var/openfaas/secrets/" + name) as f:
+        value = f.read().strip()
+
+    return value
+
+# input = "v0=hash"
+# print(get_hash(input))
+def get_hash(input):
+    index = input.find("=")
+    if index > -1:
+        return input[index+1:]
+    return input
 
 def challenge(r):
     if r["type"] == "url_verification":
@@ -76,3 +101,12 @@ def log_env():
     envs = os.environ
     for e in envs:
         sys.stderr.write(e + " " + envs[e] + "\n")
+
+def valid_hmac(key, msg, digest):
+    hash = hmac.new(key, msg, sha256)
+    hexdigest = hash.hexdigest()
+    res = digest == hexdigest
+    msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
+    sys.stderr.write(msg)
+
+    return res
