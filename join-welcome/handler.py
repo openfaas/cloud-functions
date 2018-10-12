@@ -39,7 +39,7 @@ def handle(req):
 
         slack_request_timestamp = os.getenv("Http_X_Slack_Request_Timestamp", "")
 
-        input = f"v0:{slack_request_timestamp}:{req}".encode('utf-8')
+        input = f"v0:{slack_request_timestamp}:{req}"
 
         if valid_hmac(signing_secret, input, get_hash(digest)) == True:
             return process_event(r, target_channel, webhook_url)
