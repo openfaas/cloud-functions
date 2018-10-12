@@ -30,7 +30,7 @@ def handle(req):
 
     if "event" in r:
         webhook_url = read_secret("slack-incoming-webhook-url")
-        signing_secret = read_secret("slack-signing-secret")
+        signing_secret = read_secret("slack-signing-token")
 
         target_channel = os.getenv("target_channel")
         digest = os.getenv("Http_X_Slack_Signature", "")
