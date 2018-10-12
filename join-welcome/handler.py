@@ -36,7 +36,12 @@ def handle(req):
         digest = os.getenv("Http_X_Slack_Signature", "")
 
         # Takes format of: "Http_X_Slack_Signature v0=hash"
-        if valid_hmac(signing_secret, req, get_hash(digest)) == True:
+
+        slack_request_timestamp = os.getenv("Http_X_Slack_Request_Timestamp", "")
+
+        input = f"v0:{slack_request_timestamp}:{req}".encode('utf-8')
+
+        if valid_hmac(signing_secret, input, get_hash(digest)) == True:
             return process_event(r, target_channel, webhook_url)
         else:
             sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
@@ -104,7 +109,7 @@ def log_env():
 
 # valid_hmac("key", "value", "90fbfcf15e74a36b89dbdb2a721d9aecffdfdddc5c83e27f7592594f71932481")
 def valid_hmac(key, msg, digest):
-    hash = hmac.new(key.encode(), msg.encode(), sha256)
+    hash = hmac.new(key.encode('utf-8'), msg.encode('utf-8'), sha256)
     hexdigest = hash.hexdigest()
     res = digest == hexdigest
     msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
