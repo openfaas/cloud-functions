@@ -102,11 +102,12 @@ def log_env():
     for e in envs:
         sys.stderr.write(e + " " + envs[e] + "\n")
 
+# valid_hmac("key", "value", "90fbfcf15e74a36b89dbdb2a721d9aecffdfdddc5c83e27f7592594f71932481")
 def valid_hmac(key, msg, digest):
-    hash = hmac.new(key, msg, sha256)
+
+    hash = hmac.new(key.encode("utf-8"), msg.encode("utf-8"), sha256)
     hexdigest = hash.hexdigest()
     res = digest == hexdigest
     msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
     sys.stderr.write(msg)
-
     return res
