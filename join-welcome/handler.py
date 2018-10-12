@@ -19,9 +19,9 @@ def handle(req):
     r = None
     try:
         r = json.loads(req)
-    except json.decoder.JSONDecodeError:
+    except ValueError, e:
         sys.stderr.write("Error parsing request, invalid JSON")
-        os.exit(1)
+        sys.exit(1)
 
     if "challenge" in r:
         return challenge(r)
