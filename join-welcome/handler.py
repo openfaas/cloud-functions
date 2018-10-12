@@ -49,6 +49,21 @@ def handle(req):
 
     return "Nothing to do with webhook"
 
+def challenge(r):
+    if r["type"] == "url_verification":
+        res = {"challenge": r["challenge"]}
+        return json.dumps(res)
+
+
+# valid_hmac("key", "value", "90fbfcf15e74a36b89dbdb2a721d9aecffdfdddc5c83e27f7592594f71932481")
+def valid_hmac(key, msg, digest):
+    hash = hmac.new(key.encode('utf-8'), msg.encode('utf-8'), sha256)
+    hexdigest = hash.hexdigest()
+    res = digest == hexdigest
+    msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
+    sys.stderr.write(msg)
+    return res
+
 def read_secret(name):
     value = ""
     
@@ -64,11 +79,6 @@ def get_hash(input):
     if index > -1:
         return input[index+1:]
     return input
-
-def challenge(r):
-    if r["type"] == "url_verification":
-        res = {"challenge": r["challenge"]}
-        return json.dumps(res)
 
 def process_event(r, target_channel, webhook_url):
     event_type = r["event"]["type"]
@@ -106,14 +116,3 @@ def log_env():
     envs = os.environ
     for e in envs:
         sys.stderr.write(e + " " + envs[e] + "\n")
-
-# valid_hmac("key", "value", "90fbfcf15e74a36b89dbdb2a721d9aecffdfdddc5c83e27f7592594f71932481")
-def valid_hmac(key, msg, digest):
-    hash = hmac.new(key.encode('utf-8'), msg.encode('utf-8'), sha256)
-    hexdigest = hash.hexdigest()
-    res = digest == hexdigest
-    msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
-    sys.stderr.write(msg)
-    # return res
-
-    return True

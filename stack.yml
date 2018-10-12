@@ -27,6 +27,6 @@ functions:
       combine_output: false
       content_type: application/json
       target_channel: "C4XCQR8TY"
-      log_env: "1"
+      log_env: "0"
     secrets:
       - cloud-functions-secrets
