@@ -3,26 +3,29 @@ provider:
   gateway: http://127.0.0.1:8080
 
 functions:
-  kollector:
-    lang: node8-express
-    handler: ./kollector
-    image: openfaas/kollector:latest
-  latest-release:
-    lang: go
-    handler: ./latest-release
-    image: alexellis/latest-release:0.1
-    environment:
-      write_debug: true
-      content_type: text/html
   signup:
     lang: golang-middleware
     handler: ./signup
     image: signup:latest
     environment:
       gist_url: "https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026"
+
   slack:
     lang: golang-middleware
     handler: ./slack
     image: slack:latest
     environment:
       slack_url: "https://docs.openfaas.com/community"
+
+  join-welcome:
+    lang: python3
+    handler: ./join-welcome
+    image: alexellis/join-welcome:1.0
+    environment:
+      write_debug: true
+      read_debug: true
+      combine_output: false
+      content_type: application/json
+      target_channel: "C4XCQR8TY"
+    secrets:
+      - cloud-functions-secrets
