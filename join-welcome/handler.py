@@ -16,7 +16,12 @@ def handle(req):
     if os.getenv("log_env", "0") == "1":
         log_env()
 
-    r = json.loads(req)
+    r = None
+    try:
+        r = json.loads(req)
+    except json.decoder.JSONDecodeError:
+        sys.stderr.write("Error parsing request, invalid JSON")
+        os.exit(1)
 
     if "challenge" in r:
         return challenge(r)
