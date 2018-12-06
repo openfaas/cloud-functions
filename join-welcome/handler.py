@@ -4,6 +4,7 @@ import random
 import json
 from hashlib import sha256
 import hmac
+import time
 
 import requests
 
@@ -95,8 +96,11 @@ def process_event(r, target_channel, webhook_url):
 
                 msg = {"text": "Let's all welcome {} to the community! {} ".format(who, emoticons.strip())}
 
+                start = time.time()
                 out_req = requests.post(webhook_url, json=msg)
-                return ("{} response from Slack: {}".format(str(out_req.status_code), out_req.text))
+                end = time.time()
+                elapsed = end - start
+                return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text), elapsed)
 
     return "Cannot process event_type: {}".format(event_type)
 
