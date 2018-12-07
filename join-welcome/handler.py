@@ -24,7 +24,8 @@ def handle(req):
         r = json.loads(req)
     except ValueError:
         sys.stderr.write("Error parsing request, invalid JSON")
-        sys.exit(1)
+        return
+        # sys.exit(1)
 
     if "challenge" in r:
         return challenge(r)
@@ -53,7 +54,8 @@ def handle(req):
             return process_event(r, target_channel, webhook_url)
         else:
             sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
-            sys.exit(1)
+            # sys.exit(1)
+            return
 
     return "Nothing to do with webhook"
 
