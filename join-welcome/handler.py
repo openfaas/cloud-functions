@@ -42,7 +42,14 @@ def handle(req):
 
         input = f"v0:{slack_request_timestamp}:{req}"
 
-        if valid_hmac(signing_secret, input, get_hash(digest)) == True:
+        start = time.time()
+        is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
+        end = time.time()
+        elapsed = end - start
+
+        sys.stderr.write("valid_hmac took {}s\n".format(elapsed)
+
+        if is_valid_hmac == True:
             return process_event(r, target_channel, webhook_url)
         else:
             sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
@@ -61,8 +68,10 @@ def valid_hmac(key, msg, digest):
     hash = hmac.new(key.encode('utf-8'), msg.encode('utf-8'), sha256)
     hexdigest = hash.hexdigest()
     res = digest == hexdigest
-    msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res)
-    sys.stderr.write(msg)
+    if res == False:
+        msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res) + "\n"
+        sys.stderr.write(msg)
+
     return res
 
 def read_secret(name):
@@ -100,7 +109,7 @@ def process_event(r, target_channel, webhook_url):
                 out_req = requests.post(webhook_url, json=msg)
                 end = time.time()
                 elapsed = end - start
-                sys.stderr.write("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
+                sys.stderr.write("{} response from Slack: {} in {}s\n".format(str(out_req.status_code), out_req.text, elapsed))
                 return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
 
     return "Cannot process event_type: {}".format(event_type)
