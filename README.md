@@ -25,3 +25,4 @@ This function redirects to the OpenFaaS Cloud Community Cluster sign-up page.
 ## slack
 
 Redirects to the Slack sign-up instructions.
+
