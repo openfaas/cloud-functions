@@ -47,7 +47,7 @@ def handle(req):
         end = time.time()
         elapsed = end - start
 
-        sys.stderr.write("valid_hmac took {}s\n".format(elapsed - start))
+        sys.stderr.write("valid_hmac took {}s\n".format(elapsed))
 
         if is_valid_hmac == True:
             return process_event(r, target_channel, webhook_url)
@@ -124,7 +124,7 @@ def build_emoticons(emoticons):
     return emoticon_str
 
 def log_event(req):
-    sys.stderr.write(req)
+    sys.stderr.write(req+"\n")
 
 def log_env():
     envs = os.environ
