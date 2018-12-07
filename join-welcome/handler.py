@@ -44,7 +44,10 @@ def handle(req):
 
         start = time.time()
         is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
-        sys.stderr.write("valid_hmac took {}s\n".format(time.time() - start))
+        end = time.time()
+        elapsed = end - start
+
+        sys.stderr.write("valid_hmac took {}s\n".format(elapsed - start))
 
         if is_valid_hmac == True:
             return process_event(r, target_channel, webhook_url)
