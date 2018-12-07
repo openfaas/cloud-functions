@@ -100,8 +100,8 @@ def process_event(r, target_channel, webhook_url):
                 out_req = requests.post(webhook_url, json=msg)
                 end = time.time()
                 elapsed = end - start
-                sys.stderr.write("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text), elapsed)
-                return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text), elapsed)
+                sys.stderr.write("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
+                return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
 
     return "Cannot process event_type: {}".format(event_type)
 
