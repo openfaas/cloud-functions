@@ -4,7 +4,7 @@ import random
 import json
 from hashlib import sha256
 import hmac
-import time
+from time import perf_counter
 
 import requests
 
@@ -42,9 +42,9 @@ def handle(req):
 
         input = f"v0:{slack_request_timestamp}:{req}"
 
-        start = time.time()
+        start = perf_counter()
         is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
-        end = time.time()
+        end = perf_counter()
         elapsed = end - start
 
         sys.stderr.write("valid_hmac took {}s\n".format(elapsed))
@@ -105,10 +105,11 @@ def process_event(r, target_channel, webhook_url):
 
                 msg = {"text": "Let's all welcome {} to the community! {} ".format(who, emoticons.strip())}
 
-                start = time.time()
+                start = perf_counter()
                 out_req = requests.post(webhook_url, json=msg)
-                end = time.time()
+                end = perf_counter()
                 elapsed = end - start
+
                 sys.stderr.write("{} response from Slack: {} in {}s\n".format(str(out_req.status_code), out_req.text, elapsed))
                 return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
 
