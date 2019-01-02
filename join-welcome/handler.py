@@ -115,7 +115,7 @@ def process_event(r, target_channel, webhook_url):
                 sys.stderr.write("{} response from Slack: {} in {}s\n".format(str(out_req.status_code), out_req.text, elapsed))
                 return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
 
-    return "Cannot process event_type: {}".format(event_type)
+    return "Cannot process event_type: {} or given channel is not target channel".format(event_type)
 
 def build_emoticons(emoticons):
     emoticon_str = ""
