@@ -26,7 +26,8 @@ functions:
       read_debug: true
       combine_output: false
       content_type: application/json
-      target_channel: "C4XCQR8TY"
+#      target_channel: "C4XCQR8TY"
+      target_channel: "CEM8K5L2U"
       log_env: "0"
     secrets:
       - cloud-functions-secrets
