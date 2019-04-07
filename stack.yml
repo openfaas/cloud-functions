@@ -7,6 +7,8 @@ functions:
     lang: golang-middleware
     handler: ./signup
     image: signup:latest
+    labels:
+      com.openfaas.scale.zero: false
     environment:
       gist_url: "https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026"
 
@@ -14,6 +16,8 @@ functions:
     lang: golang-middleware
     handler: ./slack
     image: slack:latest
+    labels:
+      com.openfaas.scale.zero: false
     environment:
       slack_url: "https://docs.openfaas.com/community"
 
@@ -21,6 +25,8 @@ functions:
     lang: golang-middleware
     handler: ./slack
     image: slack:latest
+    labels:
+      com.openfaas.scale.zero: false
     environment:
       slack_url: "https://zoom.us/j/4215401314"
 
@@ -28,6 +34,8 @@ functions:
     lang: python3
     handler: ./join-welcome
     image: alexellis/join-welcome:1.0
+    labels:
+      com.openfaas.scale.zero: false
     environment:
       write_debug: true
       read_debug: true
@@ -37,5 +45,3 @@ functions:
       log_env: "0"
     secrets:
       - cloud-functions-secrets
-
-
