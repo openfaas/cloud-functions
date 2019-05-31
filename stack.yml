@@ -31,7 +31,7 @@ functions:
       slack_url: "https://zoom.us/j/4215401314"
 
   join-welcome:
-    lang: python3
+    lang: python3-http
     handler: ./join-welcome
     image: alexellis/join-welcome:1.0
     labels:
