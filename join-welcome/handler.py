@@ -38,7 +38,6 @@ def handle(req):
         digest = os.getenv("Http_X_Slack_Signature", "")
 
         # Takes format of: "Http_X_Slack_Signature v0=hash"
-
         slack_request_timestamp = os.getenv("Http_X_Slack_Request_Timestamp", "")
 
         input = f"v0:{slack_request_timestamp}:{req}"
@@ -51,7 +50,15 @@ def handle(req):
         sys.stderr.write("valid_hmac took {}s\n".format(elapsed))
 
         if is_valid_hmac == True:
-            return process_event(r, target_channel, webhook_url)
+            start = perf_counter()
+
+            event_res = process_event(r, target_channel, webhook_url)
+
+            end = perf_counter()
+            elapsed = end - start
+            sys.stderr.write("process_event took {}s\n".format(elapsed))
+
+            return event_res
         else:
             sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
             # sys.exit(1)
@@ -71,7 +78,7 @@ def valid_hmac(key, msg, digest):
     hexdigest = hash.hexdigest()
     res = digest == hexdigest
     if res == False:
-        msg = "Hash - got: '" + digest + "' computed: '" + hexdigest + "' " + str(res) + "\n"
+        msg = "Hash - got: '{}' computed: '{}' {}\n".format(digest, hexdigest, str(res))
         sys.stderr.write(msg)
 
     return res
@@ -122,9 +129,9 @@ def build_emoticons(emoticons):
     return " ".join(emoticon)
 
 def log_event(req):
-    sys.stderr.write(req+"\n")
+    sys.stderr.write("{}\n".format(req))
 
 def log_env():
     envs = os.environ
     for e in envs:
-        sys.stderr.write(e + " " + envs[e] + "\n")
+        sys.stderr.write("{} {}\n".format(e, envs[s]))
