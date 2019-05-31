@@ -132,7 +132,7 @@ def process_event(r, target_channel, webhook_url):
 
 def build_emoticons(emoticons):
     sample = random.sample(emoticons, 5)
-    return " ".join(emoticons)
+    return " ".join(sample)
 
 def log_event(req):
     sys.stderr.write("{}\n".format(req))
