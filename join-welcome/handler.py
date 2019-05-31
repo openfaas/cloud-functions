@@ -118,13 +118,8 @@ def process_event(r, target_channel, webhook_url):
     return "Cannot process event_type: {} or given channel is not target channel".format(event_type)
 
 def build_emoticons(emoticons):
-    emoticon_str = ""
     sample = random.sample(emoticons, 5)
-
-    for emoticon in sample:
-        emoticon_str = emoticon_str + emoticon + " "
-
-    return emoticon_str
+    return " ".join(emoticon)
 
 def log_event(req):
     sys.stderr.write(req+"\n")
