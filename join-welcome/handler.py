@@ -6,71 +6,79 @@ from hashlib import sha256
 import hmac
 from time import perf_counter
 
-import requests
-
-def handle(req):
-    """handle a request to the function
-    Args:
-        req (str): request body
-    """
-
-    log_event(req)
+def handle(event, context):
+    # TODO implement
+    log_event(event.body)
 
     if os.getenv("log_env", "0") == "1":
         log_env()
 
     r = None
     try:
-        r = json.loads(req)
+        r  = json.loads(event.body)
     except ValueError:
         sys.stderr.write("Error parsing request, invalid JSON")
-        return "Error parsing request, invalid JSON"
-        # sys.exit(1)
-
+        return {
+            "statusCode": 400,
+            "body": "Error parsing request, invalid JSON"
+        }
+    
     if "challenge" in r:
-        return challenge(r)
+        res = challenge(r)
+        return {
+            "statusCode": 200,
+            "body": res
+        }
+    if "event" not in r:
+        return {
+            "statusCode": 400,
+            "body": "Nothing to do with webhook"
+        }
+    
+    webhook_url = read_secret("slack-incoming-webhook-url")
+    signing_secret = read_secret("slack-signing-token")
 
-    if "event" in r:
-        webhook_url = read_secret("slack-incoming-webhook-url")
-        signing_secret = read_secret("slack-signing-token")
+    target_channel = os.getenv("target_channel")
+    digest = ""
+    if "Http_X_Slack_Signature" in event.headers:
+        digest = event.headers["Http_X_Slack_Signature"]
 
-        target_channel = os.getenv("target_channel")
-        digest = os.getenv("Http_X_Slack_Signature", "")
+    # Takes format of: "Http_X_Slack_Signature v0=hash"
+    slack_request_timestamp = ""
+    if "Http_X_Slack_Request_Timestamp" in event.headers:
+        slack_request_timestamp = event.headers["Http_X_Slack_Request_Timestamp"]
 
-        # Takes format of: "Http_X_Slack_Signature v0=hash"
-        slack_request_timestamp = os.getenv("Http_X_Slack_Request_Timestamp", "")
+    input = f"v0:{slack_request_timestamp}:{event.body}"
 
-        input = f"v0:{slack_request_timestamp}:{req}"
+    start = perf_counter()
+    is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
+    end = perf_counter()
+    elapsed = end - start
 
+    sys.stderr.write("valid_hmac took {}s\n".format(elapsed))
+
+    if is_valid_hmac == True:
         start = perf_counter()
-        is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
+
+        event_res = process_event(r, target_channel, webhook_url)
+
         end = perf_counter()
         elapsed = end - start
+        sys.stderr.write("process_event took {}s\n".format(elapsed))
 
-        sys.stderr.write("valid_hmac took {}s\n".format(elapsed))
-
-        if is_valid_hmac == True:
-            start = perf_counter()
-
-            event_res = process_event(r, target_channel, webhook_url)
-
-            end = perf_counter()
-            elapsed = end - start
-            sys.stderr.write("process_event took {}s\n".format(elapsed))
-
-            return event_res
-        else:
-            sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
-            # sys.exit(1)
-            return "Invalid HMAC in X-Slack-Signature header"
-
-    return "Nothing to do with webhook"
+        return event_res
+    else:
+        sys.stderr.write("Invalid HMAC in X-Slack-Signature header")
+        # sys.exit(1)
+        return {
+            "statusCode": 401,
+            "body": "Invalid HMAC in X-Slack-Signature header"
+        }
 
 def challenge(r):
     if r["type"] == "url_verification":
         res = {"challenge": r["challenge"]}
-        return json.dumps(res)
-
+        return res
 
 # valid_hmac("key", "value", "90fbfcf15e74a36b89dbdb2a721d9aecffdfdddc5c83e27f7592594f71932481")
 def valid_hmac(key, msg, digest):
@@ -126,9 +134,14 @@ def process_event(r, target_channel, webhook_url):
                 elapsed = end - start
 
                 sys.stderr.write("{} response from Slack: {} in {}s\n".format(str(out_req.status_code), out_req.text, elapsed))
-                return ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
-
-    return "Cannot process event_type: {} or given channel is not target channel".format(event_type)
+                return {
+                    "statusCode": 200,
+                    "body": ("{} response from Slack: {} in {}s".format(str(out_req.status_code), out_req.text, elapsed))
+                }
+    return {
+        "statusCode": 400,
+        "body": "Cannot process event_type: {} or given channel is not target channel".format(event_type)
+    }
 
 def build_emoticons(emoticons):
     sample = random.sample(emoticons, 5)
@@ -141,3 +154,4 @@ def log_env():
     envs = os.environ
     for e in envs:
         sys.stderr.write("{} {}\n".format(e, envs[s]))
+        
