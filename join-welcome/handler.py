@@ -110,7 +110,13 @@ def process_event(r, target_channel, webhook_url):
 
                 positive_emoticons = [":openfaas:", ":whale:", ":thumbsup:", ":wave:", ":sunglasses:", ":ok_hand:", ":chart_with_upwards_trend:", ":sunrise:", ":smiley:", ":smiley_cat:", ":parrot:", ":rocket:", ":100:", ":muscle:", ":signal_strength:", ":man-cartwheeling:"]
 
+                start = perf_counter()
+
                 emoticons = build_emoticons(positive_emoticons)
+                end = perf_counter()
+                elapsed = end - start
+
+                sys.stderr.write("Generating emoticons took {}s\n".format(elapsed))
 
                 msg = {"text": "Let's all welcome {} to the community! {} ".format(who, emoticons.strip())}
 
