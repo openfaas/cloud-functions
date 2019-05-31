@@ -52,6 +52,8 @@ def handle(event, context):
 
     input = f"v0:{slack_request_timestamp}:{event.body}"
 
+    sys.stderr.write("Input: '{}'\n".format(input))
+
     start = perf_counter()
     is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
     end = perf_counter()
