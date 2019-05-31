@@ -7,7 +7,9 @@ import hmac
 from time import perf_counter
 
 def handle(event, context):
-    # TODO implement
+    SLACK_SIG_HEADER = "X-Slack-Signature"
+    SLACK_TIMESTAMP_HEADER = "X-Slack-Request-Timestamp"
+    
     log_event(event.body)
 
     if os.getenv("log_env", "0") == "1":
@@ -15,7 +17,7 @@ def handle(event, context):
 
     r = None
     try:
-        r  = json.loads(event.body)
+        r = json.loads(event.body)
     except ValueError:
         sys.stderr.write("Error parsing request, invalid JSON")
         return {
@@ -40,13 +42,13 @@ def handle(event, context):
 
     target_channel = os.getenv("target_channel")
     digest = ""
-    if "Http_X_Slack_Signature" in event.headers:
-        digest = event.headers["Http_X_Slack_Signature"]
+    if SLACK_SIG_HEADER in event.headers:
+        digest = event.headers[SLACK_SIG_HEADER]
 
-    # Takes format of: "Http_X_Slack_Signature v0=hash"
+    # Takes format of: "X-Slack-Signature v0=hash"
     slack_request_timestamp = ""
-    if "Http_X_Slack_Request_Timestamp" in event.headers:
-        slack_request_timestamp = event.headers["Http_X_Slack_Request_Timestamp"]
+    if SLACK_TIMESTAMP_HEADER in event.headers:
+        slack_request_timestamp = event.headers[SLACK_TIMESTAMP_HEADER]
 
     input = f"v0:{slack_request_timestamp}:{event.body}"
 
