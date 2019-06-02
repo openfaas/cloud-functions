@@ -10,14 +10,17 @@ def handle(event, context):
     SLACK_SIG_HEADER = "X-Slack-Signature"
     SLACK_TIMESTAMP_HEADER = "X-Slack-Request-Timestamp"
     
-    log_event(event.body)
+    # Convert bytestring to python3 default encoding (utf-8)
+    body = event.body.decode()
+
+    log_event(body)
 
     if os.getenv("log_env", "0") == "1":
         log_env()
 
     r = None
     try:
-        r = json.loads(event.body)
+        r = json.loads(body)
     except ValueError:
         sys.stderr.write("Error parsing request, invalid JSON")
         return {
@@ -50,7 +53,7 @@ def handle(event, context):
     if SLACK_TIMESTAMP_HEADER in event.headers:
         slack_request_timestamp = event.headers[SLACK_TIMESTAMP_HEADER]
 
-    input = f"v0:{slack_request_timestamp}:{event.body}"
+    input = f"v0:{slack_request_timestamp}:{body}"
 
     start = perf_counter()
     is_valid_hmac = valid_hmac(signing_secret, input, get_hash(digest))
