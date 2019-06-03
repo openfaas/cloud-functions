@@ -2,9 +2,11 @@ import sys
 import os
 import random
 import json
-from hashlib import sha256
 import hmac
 from time import perf_counter
+
+import requests
+from hashlib import sha256
 
 def handle(event, context):
     SLACK_SIG_HEADER = "X-Slack-Signature"
