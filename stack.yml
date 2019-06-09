@@ -30,6 +30,15 @@ functions:
     environment:
       slack_url: "https://zoom.us/j/4215401314"
 
+  calendar:
+    lang: golang-middleware
+    handler: ./slack
+    image: slack:latest
+    labels:
+      com.openfaas.scale.zero: false
+    environment:
+      slack_url: "https://calendly.com/alexellis"
+
   join-welcome:
     lang: python3-http
     handler: ./join-welcome
