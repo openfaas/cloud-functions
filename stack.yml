@@ -42,7 +42,7 @@ functions:
   join-welcome:
     lang: python3-http
     handler: ./join-welcome
-    image: alexellis/join-welcome:1.0
+    image: alexellis/join-welcome:1.0.1
     labels:
       com.openfaas.scale.zero: false
     environment:
