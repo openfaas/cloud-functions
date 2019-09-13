@@ -30,6 +30,15 @@ functions:
     environment:
       slack_url: "https://zoom.us/j/4215401314"
 
+  insiders:
+    lang: golang-middleware
+    handler: ./slack
+    image: slack:latest
+    labels:
+      com.openfaas.scale.zero: false
+    environment:
+      slack_url: "https://github.com/users/alexellis/sponsorship"
+
   calendar:
     lang: golang-middleware
     handler: ./slack
