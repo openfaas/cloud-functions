@@ -55,8 +55,8 @@ functions:
     labels:
       com.openfaas.scale.zero: false
     environment:
-      write_debug: true
-      read_debug: true
+      write_debug: false
+      read_debug: false
       combine_output: false
       content_type: application/json
       target_channel: "C4XCQR8TY"
