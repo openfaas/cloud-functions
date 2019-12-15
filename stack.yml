@@ -64,3 +64,8 @@ functions:
     secrets:
       - cloud-functions-secrets
 
+  external-ip:
+    lang: golang-middleware
+    handler: ./external-ip
+    image: external-ip:latest
+
