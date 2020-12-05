@@ -3,15 +3,6 @@ provider:
   gateway: http://127.0.0.1:8080
 
 functions:
-  signup:
-    lang: golang-middleware
-    handler: ./signup
-    image: signup:latest
-    labels:
-      com.openfaas.scale.zero: false
-    environment:
-      gist_url: "https://gist.github.com/alexellis/d648d927c34c082bb5d965f06b818026"
-
   slack:
     lang: golang-middleware
     handler: ./slack
@@ -39,7 +30,7 @@ functions:
     environment:
       slack_url: "https://github.com/users/alexellis/sponsorship"
 
-  calendar:
+  cal:
     lang: golang-middleware
     handler: ./slack
     image: slack:latest
