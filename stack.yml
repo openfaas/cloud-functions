@@ -6,7 +6,7 @@ functions:
   slack:
     lang: golang-middleware
     handler: ./slack
-    image: slack:latest
+    image: ${OWNER:-alexellis2}:/slack:${TAG:-latest}
     labels:
       com.openfaas.scale.zero: false
     environment:
@@ -15,7 +15,7 @@ functions:
   zoom:
     lang: golang-middleware
     handler: ./slack
-    image: slack:latest
+    image: ${OWNER:-alexellis2}:/slack:${TAG:-latest}
     labels:
       com.openfaas.scale.zero: false
     environment:
@@ -24,7 +24,7 @@ functions:
   insiders:
     lang: golang-middleware
     handler: ./slack
-    image: slack:latest
+    image: ${OWNER:-alexellis2}:/slack:${TAG:-latest}
     labels:
       com.openfaas.scale.zero: false
     environment:
@@ -33,7 +33,7 @@ functions:
   cal:
     lang: golang-middleware
     handler: ./slack
-    image: slack:latest
+    image: ${OWNER:-alexellis2}:/slack:${TAG:-latest}
     labels:
       com.openfaas.scale.zero: false
     environment:
@@ -42,7 +42,7 @@ functions:
   join-welcome:
     lang: python3-http
     handler: ./join-welcome
-    image: alexellis/join-welcome:1.0.1
+    image: ${OWNER:-alexellis2}/join-welcome:${TAG:-latest}
     labels:
       com.openfaas.scale.zero: false
     environment:
@@ -58,5 +58,8 @@ functions:
   external-ip:
     lang: golang-middleware
     handler: ./external-ip
-    image: external-ip:latest
+    image: ${OWNER:-alexellis2}/external-ip:${TAG:-latest}
 
+configuration:
+  templates:
+    - name: golang-middleware
